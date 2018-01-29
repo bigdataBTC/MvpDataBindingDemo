@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MvpDataBindingDemo</string>
+    <string name="mainTitle">首页</string>
 </resources>

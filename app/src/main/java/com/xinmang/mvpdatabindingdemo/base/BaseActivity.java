@@ -1,11 +1,19 @@
 package com.xinmang.mvpdatabindingdemo.base;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.xinmang.mvpdatabindingdemo.R;
+import com.xinmang.mvpdatabindingdemo.databinding.ActivityBaseBinding;
 import com.xinmang.mvpdatabindingdemo.factory.PresenterMvpFactory;
 import com.xinmang.mvpdatabindingdemo.factory.PresenterMvpFactoryIml;
 import com.xinmang.mvpdatabindingdemo.proxy.BaseProxy;
@@ -16,7 +24,7 @@ import com.xinmang.mvpdatabindingdemo.utils.LogUtils;
  * Created by lipei on 2018/1/27.
  */
 
-public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresenter<V>> extends AppCompatActivity implements PresenterProxyInterface<V,P>{
+public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresenter<V>,VB extends ViewDataBinding> extends AppCompatActivity implements PresenterProxyInterface<V,P>{
     public final static String TAG=BaseActivity.class.getName();
     private static final String PRESENTER_SAVE_KEY = "presenter_save_key";
     /**
@@ -26,40 +34,74 @@ public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresen
 
     protected Context mContext;
 
+    private ActivityBaseBinding mBaseBinding;//根布局
+
+    protected VB mBindingView;//集成BaseActivity传递进来的布局
+
     private boolean isShowToolBar=true;//是否显示通用的ToolBar,默认显示
 
     private int backPic= R.drawable.back_white;//默认返回图标,可修改
+
+    private int tooBarBackGroundColor=R.color.colorPrimary;//通用toolBar默认的颜色
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onRestore(savedInstanceState);
-        mContext=this;
+        initLayout();
+        init();
+        setToolBar();
+        initData();
+        initEventer();
+
     }
 
+    private void initLayout(){
+        mContext=this;
+        mBaseBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_base, null, false);
+        mBindingView = DataBindingUtil.inflate(getLayoutInflater(), getLayoutContent(), null, false);
+        // content
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mBindingView.getRoot().setLayoutParams(params);
+        mBaseBinding.container.addView(mBindingView.getRoot());
+        getWindow().setContentView(mBaseBinding.getRoot());
+    }
 
     /**
-     * 获取布局文件
+     * 设置titlebar
      */
-    protected abstract void getLayoutContent();
+    protected void setToolBar() {
+        if (isShowToolBar) {
+            setSupportActionBar(mBaseBinding.topToolBar.toolBar);
+            mBaseBinding.topToolBar.toolBar.setBackgroundResource(tooBarBackGroundColor);
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                //去除默认Title显示
+//                actionBar.setDisplayShowTitleEnabled(false);
+//                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeAsUpIndicator(backPic);
+            }
+            mBaseBinding.topToolBar.toolBar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+
+                }
+            });
+
+        } else {
+            mBaseBinding.topToolBar.toolBar.setVisibility(View.GONE);
+        }
+    }
 
     /**
-     * 初始化的方法
+     * 设置标题
+     * @param title 传入的标题
+     * @desrciption 次方法要在initData()中执行
      */
-    protected abstract void init();
-
-    /**
-     * 初始化数据
-     */
-
-    protected abstract void initData();
-
-    /**
-     *初始化监听
-     */
-
-    protected abstract void initEventer();
-
+    public void setmTitle(CharSequence title){
+        mBaseBinding.topToolBar.toolBar.setTitle(title);
+    }
 
     private void onRestore(Bundle savedInstanceState){
         LogUtils.e(TAG,"onCreate");
@@ -96,4 +138,26 @@ public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresen
     public P getPresenter() {
         return mProxy.getPresenter();
     }
+
+    /**
+     * 获取布局文件
+     */
+    protected abstract int getLayoutContent();
+
+    /**
+     * 初始化的方法
+     */
+    protected abstract void init();
+
+    /**
+     * 初始化数据
+     */
+
+    protected abstract void initData();
+
+    /**
+     *初始化监听
+     */
+
+    protected abstract void initEventer();
 }
