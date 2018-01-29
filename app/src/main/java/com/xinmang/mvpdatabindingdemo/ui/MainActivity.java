@@ -1,7 +1,11 @@
-package com.xinmang.mvpdatabindingdemo;
-import android.os.Bundle;
+package com.xinmang.mvpdatabindingdemo.ui;
+import android.support.v7.widget.LinearLayoutManager;
 import android.widget.TextView;
+
+import com.xinmang.mvpdatabindingdemo.R;
+import com.xinmang.mvpdatabindingdemo.adapter.MaintextAdapter;
 import com.xinmang.mvpdatabindingdemo.base.BaseActivity;
+import com.xinmang.mvpdatabindingdemo.bean.TextBean;
 import com.xinmang.mvpdatabindingdemo.databinding.ActivityMainBinding;
 import com.xinmang.mvpdatabindingdemo.factory.CreatePresenter;
 import com.xinmang.mvpdatabindingdemo.mvp.presenter.MainPresenter;
@@ -11,17 +15,7 @@ import com.xinmang.mvpdatabindingdemo.utils.LogUtils;
 @CreatePresenter(MainPresenter.class)
 public class MainActivity extends BaseActivity<MianView, MainPresenter,ActivityMainBinding> implements MianView {
     public final static String TAG=MainActivity.class.getName();
-    private TextView login;
-
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        login = (TextView) findViewById(R.id.login);
-//        getPresenter().Login();
-//
-//    }
+    private MaintextAdapter maintextAdapter;
 
     /**
      * 获取布局文件
@@ -36,9 +30,10 @@ public class MainActivity extends BaseActivity<MianView, MainPresenter,ActivityM
      */
     @Override
     protected void init() {
-        login=mBindingView.login;
-        LogUtils.e(TAG,"init");
-
+        setmTitle(getString(R.string.mainTitle));
+        maintextAdapter=new MaintextAdapter();
+        mBindingView.setRvAdapter(maintextAdapter);
+        mBindingView.setRvLayoutManager(new LinearLayoutManager(mContext));
     }
 
     /**
@@ -46,9 +41,7 @@ public class MainActivity extends BaseActivity<MianView, MainPresenter,ActivityM
      */
     @Override
     protected void initData() {
-        getPresenter().Login();
-        setmTitle(getString(R.string.mainTitle));
-
+        getPresenter().networkRequest();
     }
 
     /**
@@ -59,22 +52,17 @@ public class MainActivity extends BaseActivity<MianView, MainPresenter,ActivityM
 
     }
 
+
     @Override
-    public void LoginLoading() {
-        login.setText("登录中...");
+    public void success(TextBean textBean) {
+        maintextAdapter.addData(textBean.getData());
+
 
     }
 
     @Override
-    public void LoginSuccess() {
-        login.setText("登录成功...");
+    public void fail(String error) {
+        LogUtils.e(TAG,error);
 
     }
-
-    @Override
-    public void LoginFail() {
-        login.setText("登录失败...");
-
-    }
-
 }

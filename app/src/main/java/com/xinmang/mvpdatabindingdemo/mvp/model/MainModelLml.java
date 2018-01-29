@@ -4,6 +4,9 @@ import android.os.Handler;
 
 import com.xinmang.mvpdatabindingdemo.base.BaseBriadgeData;
 import com.xinmang.mvpdatabindingdemo.base.BaseModel;
+import com.xinmang.mvpdatabindingdemo.bean.TextBean;
+import com.xinmang.mvpdatabindingdemo.net.NetWorkRequest;
+import com.xinmang.mvpdatabindingdemo.net.NetWorkSubscriber;
 
 /**
  * Created by huwei on 2018/1/27.
@@ -11,13 +14,21 @@ import com.xinmang.mvpdatabindingdemo.base.BaseModel;
 
 public class MainModelLml implements BaseModel.mainMode {
 
+
     @Override
-    public void netWork(final BaseBriadgeData.mainData mList) {
-        new Handler().postDelayed(new Runnable() {
+    public void netWork(BaseBriadgeData.mainData mList) {
+        NetWorkRequest.textNetWork(new NetWorkSubscriber<TextBean>(){
             @Override
-            public void run() {
-                mList.addData("success");
+            public void onError(Throwable e) {
+                mList.error(e.toString());
             }
-        },1000);
+
+            @Override
+            public void onNext(TextBean textBean) {
+                mList.addData(textBean);
+
+            }
+        });
+
     }
 }

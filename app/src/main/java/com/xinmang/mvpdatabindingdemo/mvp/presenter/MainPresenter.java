@@ -3,6 +3,7 @@ package com.xinmang.mvpdatabindingdemo.mvp.presenter;
 import com.xinmang.mvpdatabindingdemo.base.BaseBriadgeData;
 import com.xinmang.mvpdatabindingdemo.base.BaseModel;
 import com.xinmang.mvpdatabindingdemo.base.BaseMvpPresenter;
+import com.xinmang.mvpdatabindingdemo.bean.TextBean;
 import com.xinmang.mvpdatabindingdemo.mvp.model.MainModelLml;
 import com.xinmang.mvpdatabindingdemo.mvp.view.MianView;
 
@@ -16,19 +17,19 @@ public class MainPresenter extends BaseMvpPresenter<MianView> implements BaseBri
         mainMode=new MainModelLml();
     }
 
-
-    public void Login(){
-        getView().LoginLoading();
+    public void networkRequest(){
         mainMode.netWork(this);
     }
-    @Override
-    public void addData(String mList) {
-        if(mList.equals("success")){
-            getView().LoginSuccess();
 
-        }else{
-            getView().LoginFail();
-        }
+    @Override
+    public void addData(TextBean mList) {
+        getView().success(mList);
+
+    }
+
+    @Override
+    public void error(String error) {
+        getView().fail(error);
 
     }
 }

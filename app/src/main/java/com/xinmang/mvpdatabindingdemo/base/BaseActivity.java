@@ -5,7 +5,6 @@ import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,11 @@ import com.xinmang.mvpdatabindingdemo.proxy.PresenterProxyInterface;
 import com.xinmang.mvpdatabindingdemo.utils.LogUtils;
 
 /**
- * Created by lipei on 2018/1/27.
+ * Created by 李佩
+ * @date 2017/01/28
+ * @desrcption mvp模式Activity的基类,既然是基类，就不做任何业务逻辑,
+ * 只把所有Activity共有的抽象出来，本基类提供类使用公共的ToolBar和使用自定义的ToolBar的方法
+ *
  */
 
 public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresenter<V>,VB extends ViewDataBinding> extends AppCompatActivity implements PresenterProxyInterface<V,P>{
@@ -58,6 +61,7 @@ public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresen
 
     private void initLayout(){
         mContext=this;
+        mProxy.onAttachView((V) this);
         mBaseBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_base, null, false);
         mBindingView = DataBindingUtil.inflate(getLayoutInflater(), getLayoutContent(), null, false);
         // content
@@ -90,10 +94,26 @@ public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresen
     /**
      * 设置标题
      * @param title 传入的标题
-     * @desrciption 次方法要在initData()中执行
+     * @desrciption 次方法要在init()中执行
      */
     public void setmTitle(CharSequence title){
         mBaseBinding.topToolBar.toolBar.setTitle(title);
+    }
+
+    /**
+     * 设置是否使用公共的ToolBar,要在init()方法中执行
+     * @param isShowToolBar 是否显示公共的ToolBar
+     */
+    public void setShowToolBar(boolean isShowToolBar){
+        this.isShowToolBar=isShowToolBar;
+    }
+
+    /**
+     * 设置ToolBar的背景颜色,要在init()方法中执行
+     * @param tooBarBackGroundColor 颜色值
+     */
+    public void setTooBarBackGroundColor(int tooBarBackGroundColor){
+        this.tooBarBackGroundColor=tooBarBackGroundColor;
     }
 
     private void onRestore(Bundle savedInstanceState){
@@ -102,6 +122,35 @@ public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresen
         if(savedInstanceState!=null){
             mProxy.onRestoreInstanceState(savedInstanceState);
         }
+        mProxy.onAttachView((V) this);
+    }
+
+
+    /**
+     * 获取布局文件
+     */
+    protected abstract int getLayoutContent();
+
+    /**
+     * 初始化的方法
+     */
+    protected abstract void init();
+
+    /**
+     * 初始化数据
+     */
+
+    protected abstract void initData();
+
+    /**
+     *初始化监听
+     */
+
+    protected abstract void initEventer();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         mProxy.onAttachView((V) this);
     }
 
@@ -132,25 +181,5 @@ public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresen
         return mProxy.getPresenter();
     }
 
-    /**
-     * 获取布局文件
-     */
-    protected abstract int getLayoutContent();
 
-    /**
-     * 初始化的方法
-     */
-    protected abstract void init();
-
-    /**
-     * 初始化数据
-     */
-
-    protected abstract void initData();
-
-    /**
-     *初始化监听
-     */
-
-    protected abstract void initEventer();
 }
