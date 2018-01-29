@@ -74,18 +74,11 @@ public abstract class BaseActivity<V extends BaseMvpView,P extends BaseMvpPresen
         if (isShowToolBar) {
             setSupportActionBar(mBaseBinding.topToolBar.toolBar);
             mBaseBinding.topToolBar.toolBar.setBackgroundResource(tooBarBackGroundColor);
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                //去除默认Title显示
-//                actionBar.setDisplayShowTitleEnabled(false);
-//                actionBar.setDisplayHomeAsUpEnabled(true);
-                actionBar.setHomeAsUpIndicator(backPic);
-            }
+            mBaseBinding.topToolBar.toolBar.setNavigationIcon(backPic);
             mBaseBinding.topToolBar.toolBar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     finish();
-
                 }
             });
 

@@ -6,20 +6,22 @@ import com.xinmang.mvpdatabindingdemo.databinding.ActivityMainBinding;
 import com.xinmang.mvpdatabindingdemo.factory.CreatePresenter;
 import com.xinmang.mvpdatabindingdemo.mvp.presenter.MainPresenter;
 import com.xinmang.mvpdatabindingdemo.mvp.view.MianView;
+import com.xinmang.mvpdatabindingdemo.utils.LogUtils;
 
 @CreatePresenter(MainPresenter.class)
 public class MainActivity extends BaseActivity<MianView, MainPresenter,ActivityMainBinding> implements MianView {
+    public final static String TAG=MainActivity.class.getName();
     private TextView login;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        login = (TextView) findViewById(R.id.login);
-        getPresenter().Login();
-
-    }
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+//        login = (TextView) findViewById(R.id.login);
+//        getPresenter().Login();
+//
+//    }
 
     /**
      * 获取布局文件
@@ -35,6 +37,7 @@ public class MainActivity extends BaseActivity<MianView, MainPresenter,ActivityM
     @Override
     protected void init() {
         login=mBindingView.login;
+        LogUtils.e(TAG,"init");
 
     }
 
