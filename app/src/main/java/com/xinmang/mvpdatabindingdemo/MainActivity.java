@@ -9,7 +9,7 @@ import com.xinmang.mvpdatabindingdemo.mvp.view.MianView;
 @CreatePresenter(MainPresenter.class)
 public class MainActivity extends BaseActivity<MianView, MainPresenter> implements MianView {
     private TextView login;
-    //git测试
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
