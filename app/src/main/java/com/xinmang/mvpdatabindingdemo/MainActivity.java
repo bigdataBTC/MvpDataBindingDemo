@@ -12,14 +12,14 @@ public class MainActivity extends BaseActivity<MianView, MainPresenter,ActivityM
     private TextView login;
 
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        login = (TextView) findViewById(R.id.login);
-//        getPresenter().Login();
-//
-//    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        login = (TextView) findViewById(R.id.login);
+        getPresenter().Login();
+
+    }
 
     /**
      * 获取布局文件
